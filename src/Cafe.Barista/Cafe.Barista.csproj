@@ -25,8 +25,9 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="AutofacSerilogIntegration" Version="2.1.0" />
-    <PackageReference Include="serilog.sinks.console" Version="3.1.1" />
-    <PackageReference Include="serilog.sinks.seq" Version="4.0.0" />
+    <PackageReference Include="serilog.sinks.console" Version="6.1.1" />
+    <PackageReference Include="serilog.sinks.seq" Version="9.0.0" />
+    <PackageReference Include="SerilogTracing" Version="2.4.0" />
   </ItemGroup>
 
 </Project>

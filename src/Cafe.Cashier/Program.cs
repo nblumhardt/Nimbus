@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Serilog;
+using SerilogTracing;
 
 namespace Cashier
 {
@@ -14,6 +15,9 @@ namespace Cashier
                          .WriteTo.Seq("http://localhost:5341")
                          .Enrich.WithProperty("Application", "Cashier")
                          .CreateLogger();
+
+            using var _ = new ActivityListenerConfiguration()
+                .TraceToSharedLogger();
 
             var builder = new ContainerBuilder();
             builder.RegisterAssemblyModules(typeof(Program).Assembly);

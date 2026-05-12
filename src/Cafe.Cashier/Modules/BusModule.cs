@@ -58,6 +58,7 @@ namespace Cashier.Modules
 
                                                  // NATS Transport
                                                  .WithTransport(new NatsTransportConfiguration()
+                                                     .WithCredentials("admin", "password")
                                                      .WithUrl("nats://localhost:4222")
                                                      .WithJetStream())
 

@@ -3,7 +3,7 @@
         <ProjectReference Include="..\Nimbus\Nimbus.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="serilog" Version="2.8.0"/>
+        <PackageReference Include="serilog" Version="4.3.1" />
     </ItemGroup>
     <PropertyGroup>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

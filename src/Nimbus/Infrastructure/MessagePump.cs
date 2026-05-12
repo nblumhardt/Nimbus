@@ -8,6 +8,7 @@ using Nimbus.Infrastructure.Dispatching;
 using Nimbus.Infrastructure.Logging;
 using Nimbus.Infrastructure.MessageSendersAndReceivers;
 using Nimbus.InfrastructureContracts;
+// ReSharper disable ExplicitCallerInfoArgument
 
 namespace Nimbus.Infrastructure
 {
@@ -27,6 +28,8 @@ namespace Nimbus.Infrastructure
 
         private bool _started;
         private readonly SemaphoreSlim _startStopSemaphore = new SemaphoreSlim(1, 1);
+
+        static readonly ActivitySource ActivitySource = new("Nimbus.Infrastructure.MessagePump");
 
         public MessagePump(EnableDeadLetteringOnMessageExpirationSetting enableDeadLetteringOnMessageExpiration,
                            MaxDeliveryAttemptSetting maxDeliveryAttempts,
@@ -93,6 +96,9 @@ namespace Nimbus.Infrastructure
 
         private async Task Dispatch(NimbusMessage message)
         {
+            using var activity = ActivitySource.StartActivity("Dispatch inbound message {MessageId}");
+            activity?.AddTag("MessageId", message.MessageId);
+            
             DispatchLoggingContext.NimbusMessage = message;
 
             // Early exit: have we pre-fetched this message and had our lock already expire? If so, just
@@ -155,6 +161,7 @@ namespace Nimbus.Infrastructure
             catch (Exception exc)
             {
                 _logger.Error(exc, "Unhandled exception in message pump");
+                activity?.SetStatus(ActivityStatusCode.Error);
             }
         }
 

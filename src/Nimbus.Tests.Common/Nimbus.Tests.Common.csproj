@@ -24,11 +24,11 @@
         <PackageReference Include="NSubstitute" Version="4.2.1"/>
         <PackageReference Include="nunit" Version="3.14.0"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
-        <PackageReference Include="serilog" Version="2.8.0"/>
-        <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.1"/>
-        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0"/>
-        <PackageReference Include="serilog.exceptions" Version="5.3.1"/>
-        <PackageReference Include="serilog.sinks.seq" Version="4.0.0"/>
+        <PackageReference Include="serilog" Version="4.3.1" />
+        <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+        <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+        <PackageReference Include="serilog.exceptions" Version="8.4.0" />
+        <PackageReference Include="serilog.sinks.seq" Version="9.0.0" />
         <PackageReference Include="shouldly" Version="4.2.1"/>
     </ItemGroup>
 
