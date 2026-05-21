@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Nimbus.Exceptions;
@@ -10,6 +11,7 @@ using Nimbus.InfrastructureContracts.DependencyResolution;
 using Nimbus.InfrastructureContracts.Handlers;
 using Nimbus.Interceptors.Inbound;
 using Nimbus.MessageContracts;
+// ReSharper disable ExplicitCallerInfoArgument
 
 namespace Nimbus.Infrastructure.Commands
 {
@@ -21,6 +23,8 @@ namespace Nimbus.Infrastructure.Commands
         private readonly IReadOnlyDictionary<Type, Type[]> _handlerMap;
         private readonly IPropertyInjector _propertyInjector;
 
+        static readonly ActivitySource ActivitySource = new("Nimbus.Infrastructure.Commands.CommandMessageDispatcher");
+        
         public CommandMessageDispatcher(IDependencyResolver dependencyResolver,
                                         IInboundInterceptorFactory inboundInterceptorFactory,
                                         ILogger logger,
@@ -41,6 +45,10 @@ namespace Nimbus.Infrastructure.Commands
 
             // There should only ever be a single command handler
             var handlerType = _handlerMap.GetSingleHandlerTypeFor(messageType);
+
+            using var activity = ActivitySource.StartActivity("Dispatch command {MessageType} to handler {HandlerType}");
+            activity?.AddTag("MessageType", messageType);
+            activity?.AddTag("HandlerType", handlerType);
             await Dispatch((dynamic) busCommand, message, handlerType);
         }
 

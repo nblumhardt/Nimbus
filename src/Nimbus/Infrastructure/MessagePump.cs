@@ -113,7 +113,6 @@ namespace Nimbus.Infrastructure
                     now);
 
                 await PostToDeadLetterOffice(message);
-
                 return;
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Serilog;
+using Serilog.Events;
 using SerilogTracing;
 
 namespace Barista
@@ -11,12 +12,13 @@ namespace Barista
         {
             Log.Logger = new LoggerConfiguration()
                          .WriteTo.Console()
-                         .MinimumLevel.Debug()
+                     //    .MinimumLevel.Debug()
                          .WriteTo.Seq("http://localhost:5341")
                          .Enrich.WithProperty("Application", "Barista")
                          .CreateLogger();
 
             using var _ = new ActivityListenerConfiguration()
+                .InitialLevel.Override("Experimental", LogEventLevel.Debug)
                 .TraceToSharedLogger();
 
             var builder = new ContainerBuilder();

@@ -1,6 +1,6 @@
 services:
   seq:
-    image: datalust/seq:latest
+    image: datalust/seq:preview
     ports:
       - "5341:80"
     environment:

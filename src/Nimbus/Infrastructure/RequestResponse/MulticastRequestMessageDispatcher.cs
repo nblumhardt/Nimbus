@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace Nimbus.Infrastructure.RequestResponse
         private readonly IReadOnlyDictionary<Type, Type[]> _handlerMap;
         private readonly IPropertyInjector _propertyInjector;
         private readonly IFilterConditionProvider _filterConditionProvider;
+
+        static readonly ActivitySource ActivitySource = new("Nimbus.Infrastructure.RequestResponse.MulticastRequestMessageDispatcher");
 
         public MulticastRequestMessageDispatcher(INimbusMessageFactory nimbusMessageFactory,
                                                  IDependencyResolver dependencyResolver,
@@ -57,6 +60,9 @@ namespace Nimbus.Infrastructure.RequestResponse
             // There should only ever be a single multicast request handler associated with this dispatcher
             var handlerType = _handlerMap.GetSingleHandlerTypeFor(messageType);
             var dispatchMethod = GetGenericDispatchMethodFor(busRequest);
+            using var activity = ActivitySource.StartActivity("Dispatch multicast request {MessageType} to handler {HandlerType}");
+            activity?.AddTag("MessageType", messageType);
+            activity?.AddTag("HandlerType", handlerType);
             await (Task) dispatchMethod.Invoke(this, new[] {busRequest, message, handlerType});
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Nimbus.Exceptions;
@@ -19,6 +20,8 @@ namespace Nimbus.Infrastructure.Events
         private readonly IInboundInterceptorFactory _inboundInterceptorFactory;
         private readonly IFilterConditionProvider _filterConditionProvider;
         private readonly ILogger _logger;
+        
+        static readonly ActivitySource ActivitySource = new("Nimbus.Infrastructure.Events.EventMessageDispatcher");
 
         protected EventMessageDispatcher(IDependencyResolver dependencyResolver,
                                          IReadOnlyDictionary<Type, Type[]> handlerMap,
@@ -60,6 +63,9 @@ namespace Nimbus.Infrastructure.Events
 
             using (var scope = _dependencyResolver.CreateChildScope())
             {
+                using var activity = ActivitySource.StartActivity("Dispatch event {MessageType} to handler {HandlerType}");
+                activity?.AddTag("MessageType", busEvent.GetType());
+                activity?.AddTag("HandlerType", handlerType);
                 var handler = CreateHandlerFromScope(scope, busEvent, handlerType, nimbusMessage);
 
                 var interceptors = _inboundInterceptorFactory.CreateInterceptors(scope, handler, busEvent, nimbusMessage);
